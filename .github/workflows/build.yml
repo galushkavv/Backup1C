@@ -1,0 +1,25 @@
+﻿name: Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Framework
+      run: |
+        choco install visualstudio2022buildtools
+        choco install netfx-4.7.2-devpack
+
+    - name: Restore dependencies
+      run: nuget restore
+
+    - name: Build project
+      run: msbuild /p:Configuration=Release

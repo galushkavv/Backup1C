@@ -33,8 +33,16 @@ namespace Backup1C
 
             labelProgress.Text = string.Empty;
 
-            settings.LoadFromIni(settingFile);
-
+            try
+            {
+                settings.LoadFromIni(settingFile);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Не найден файл с настройками " + settingFile, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
+            }
+            
             //string folderPath = AppDomain.CurrentDomain.BaseDirectory;
             logger = new Logger(settings.FolderBackupPath + "\\1C.log", settings.FolderBackupPath + "\\application.log");
 
@@ -96,7 +104,7 @@ namespace Backup1C
             }
             TimeSpan difference = lastBaseChange - lastBackup;
 
-            if (difference.TotalHours < 24)
+            if (difference.TotalHours < 24 && lastBaseChange.Date == lastBackup.Date)
             {
                 logger.AppendInfo("Бэкап не требуется. Последний бэкап " + lastBackup + " последнее изменение базы " + lastBaseChange + " время между ними " + Math.Round(difference.TotalHours, 1) + " часов");
                 Start1cAndCloseApplication();
