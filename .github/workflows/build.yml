@@ -30,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Build-Artifacts
-        path: 'D:\a\Backup1C\Backup1C\bin\Release\*.exe'
+        path: 'D:\a\Backup1C\Backup1C\Backup1C\bin\Release\*.exe'
 
         
   release:
