@@ -15,6 +15,7 @@ jobs:
 
     - name: Setup .NET Framework
       run: |
+        choco install microsoft-build-tools
         choco install visualstudio2022buildtools
         choco install netfx-4.7.2-devpack
 
