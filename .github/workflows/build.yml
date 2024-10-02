@@ -1,0 +1,72 @@
+﻿name: Build
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Build solution
+      run: |
+        msbuild.exe Backup1C.sln /p:Configuration=Release /p:Platform="Any CPU"
+        
+    - name: List files
+      run: Get-ChildItem -Recurse D:\a\Backup1C\Backup1C\
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build-Artifacts
+        path: 'D:\a\Backup1C\Backup1C\Backup1C\bin\Release\*.exe'
+
+        
+  release:
+    needs: build
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: Build-Artifacts
+        path: 'D:\a\Backup1C\'  # Скачиваем в текущую директорию
+
+    - name: List directories and files
+      run: Get-ChildItem -Recurse -Force D:\a\Backup1C\
+      
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        release_name: Release v1.0.${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: 'D:\a\Backup1C\Backup1C.exe'
+        asset_name: Backup1C.exe
+        asset_content_type: application/octet-stream
