@@ -24,4 +24,29 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Build-Artifacts
-        path: '**/bin/Release/*'
+        path: '**/bin/Release/*.exe'
+        
+  release:
+    needs: build
+    runs-on: windows-latest
+    steps:
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0
+        release_name: Release v1.0.0
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: '**/bin/Release/*.exe' 
+        asset_name: Backup1C.exe
+        asset_content_type: application/octet-stream
