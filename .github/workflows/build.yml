@@ -23,11 +23,16 @@ jobs:
       run: |
         msbuild.exe Backup1C.sln /p:Configuration=Release /p:Platform="Any CPU"
         
+    - name: List files  # Отладка, чтобы увидеть, где находятся файлы после сборки
+      run: dir D:\a\Backup1C\Backup1C\ /s
+      
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Build-Artifacts
-        path: '**/bin/Release/*.exe'
+        path: 'D:\a\Backup1C\Backup1C\bin\Release\*.exe'
+
+
         
   release:
     needs: build
@@ -50,6 +55,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: '**/bin/Release/*.exe'
+        asset_path: 'D:\a\Backup1C\Backup1C\bin\Release\Backup1C.exe'
         asset_name: Backup1C.exe
         asset_content_type: application/octet-stream
