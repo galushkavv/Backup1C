@@ -13,15 +13,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Visual Studio 2022 Build Tools
-      run: |
-        choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --includeRecommended --includeOptional"
-        choco install netfx-4.7.2-devpack 
-
-
-    - name: Restore dependencies
-      run: nuget restore
-
     - name: Build solution
       run: |
-        MSBuild.exe Backup1C.sln /p:Configuration=Release /p:Platform="Any CPU"
+        msbuild.exe Backup1C.sln /p:Configuration=Release /p:Platform="Any CPU"
