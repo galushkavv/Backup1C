@@ -45,6 +45,10 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: Build-Artifacts
+        path: './'  # Скачиваем в текущую директорию
+
+    - name: List directories and files
+      run: Get-ChildItem -Recurse -Force
       
     - name: Create Release
       id: create_release
